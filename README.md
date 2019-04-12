@@ -17,6 +17,14 @@ To install ESP32 Board into the Arduino IDE do the following (addapted from: htt
 6) Open an example under File > Examples and test the instalation --> Good Luck!!!!!
 
 I GOT A PROBLEM!!!! --> In my Ubuntu, it did not compile (Error: import serial.tools.list_ports as list_ports)
+
   --> it needed: python-serial
-      --> just install it with: sudo apt install python-serial
+
+    --> just install it with: sudo apt install python-serial
+
+---------------x--------------------x------------------
+WARNINGS:
+1) Led pin is now 2
+
+2) Led turn on with 1, not with 0 as ESP8266 (They finally fix that stupidity!!)
 
