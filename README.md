@@ -32,3 +32,5 @@ WARNINGS:
 
 3) Digital pins are Written in the board, just use it as D15 ==> 15 (did not test all of them!!)
 
+4) Analog pins  tested so far: 36 and 39 are working!  15 and 13 ARE NOT working!!
+
