@@ -15,3 +15,8 @@ To install ESP32 Board into the Arduino IDE do the following (addapted from: htt
 --> if you don’t see the COM Port in your Arduino IDE, you need to install the ESP32 CP210x USB to UART Bridge VCP Drivers
 
 6) Open an example under File > Examples and test the instalation --> Good Luck!!!!!
+
+I GOT A PROBLEM!!!! --> In my Ubuntu, it did not compile (Error: import serial.tools.list_ports as list_ports)
+  --> it needed: python-serial
+      --> just install it with: sudo apt install python-serial
+
