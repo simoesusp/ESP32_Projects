@@ -30,3 +30,5 @@ WARNINGS:
 
 2) Led turn on with 1, not with 0 as ESP8266 (They finally fix that stupidity!!)
 
+3) Digital pins are Written in the board, just use it as D15 ==> 15 (did not test all of them!!)
+
