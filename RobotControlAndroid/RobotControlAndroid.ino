@@ -2,6 +2,12 @@
 /* Create a WIFI Server in ESP32 with IP: 192.168.4.1  by default
  * Port 80 by default
  * 
+ * You just need to connect to ESP32 Access Point
+ * password = "your-password"
+ * 
+ * Then, you can reprogram ESP32 via IP at Arduino IDE
+ * 
+ * SENDING COMMNADS
  * To send commands to Node via Browser, just type:
  * 192.168.4.1/ligaled   and wait for the reply
  * 192.168.4.1/motor?speed=25     sends number 25
@@ -18,6 +24,13 @@
 #include <ArduinoOTA.h>   // Library to allow programing via WIFI (Choose ip port in Arduino IDE
 #include <WiFi.h>        // Include the Wi-Fi library
 #include <WebServer.h>
+#include <analogWrite.h>  // Aparently, you can analogRead, but not analogWrite without a library with ESP32 !!!
+
+#define D1 23
+#define D2 22
+#define D3 21
+#define D4 19
+
 
 #define motor1PWM D1
 #define motor2PWM D2
@@ -88,7 +101,7 @@ void motor() {
   }
 }
 
-void Para() {
+void para() {
     if(dir1 == 0)
       analogWrite(motor1PWM, 0);
     else
@@ -100,36 +113,18 @@ void Para() {
       analogWrite(motor2PWM, 1024);
 
     count = 0;
+
+    Serial.println("Motor 1:");
+    Serial.println(0);
+    Serial.println(dir1);
+
+    Serial.println("Motor 2:");
+    Serial.println(0);
+    Serial.println(dir2);
+    server.send(200, "text/html", "Ok Parou!!!");
+    Serial.println("OK Parou!!!");
+    
 }
-
-
-void setup() {
-  Serial.begin(115200);
-  delay(10);
-  Serial.println('\n');
-
-  WiFi.softAP(ssid, password);             // Start the access point
-  Serial.print("Access Point \"");
-  Serial.print(ssid);
-  Serial.println("\" started");
-
-  Serial.print("IP address:\t");
-  Serial.println(WiFi.softAPIP());         // Send the IP address of the ESP8266 to the computer
-  
-  server.on("/data/", HTTP_GET, handleSentVar); // when the server receives a request with /data/ in the string then run the handleSentVar function
-  server.begin();
-}
-
-void loop() {
-  server.handleClient();
-}
-
-
-
-
-
-
-
 
 void setup() {
   //LED
@@ -142,25 +137,58 @@ void setup() {
   pinMode(motor1Dir, OUTPUT);     // Initialize the Motor PWM pin as an output
   pinMode(motor2Dir, OUTPUT);
   
-  analogWriteFreq(200);  
+  analogWriteFrequency(200);  
 
   analogWrite(motor1PWM, 0);
   analogWrite(motor2PWM, 0);
 
   digitalWrite(motor1Dir, dir1);
   digitalWrite(motor2Dir, dir2);
-  
-  
-  // OTA SETUP
+
+  // Serial Begin
   Serial.begin(115200);
   Serial.println("Booting");
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
-  while (WiFi.waitForConnectResult() != WL_CONNECTED) {
-    Serial.println("Connection Failed! Rebooting...");
-    delay(500);
-    ESP.restart();
-  }
+
+
+  // WIFI Server AP (This Create a WIFI Server in ESP32 with IP: 192.168.4.1  by default) 
+  WiFi.softAP(ssid, password);             // Start the access point
+  Serial.print("Access Point \"");
+  Serial.print(ssid);
+  Serial.println("\" started");
+
+  Serial.print("IP address:\t");
+  Serial.println(WiFi.softAPIP());         // Send the IP address of the ESP32 to the computer
+
+  server.on("/", handleRoot);  
+  server.on("/motor", HTTP_GET, motor);
+  server.on("/para", HTTP_GET, para);
+
+  server.onNotFound(handleNotFound);
+
+  server.on("/ligaled", []() {
+    server.send(200, "text/plain", "ligou");
+    digitalWrite(LED_BUILTIN, HIGH);
+  });
+
+  server.on("/desligaled", []() {
+    server.send(200, "text/plain", "apagou");
+    digitalWrite(LED_BUILTIN, LOW);
+  });
+
+  server.begin();
+  Serial.println("HTTP server started");
+  //END OF WIFI Server AP
+
+
+//  
+//  // OTA SETUP
+//  WiFi.mode(WIFI_STA);
+//  WiFi.begin(ssid, password);
+//  while (WiFi.waitForConnectResult() != WL_CONNECTED) {
+//    Serial.println("Connection Failed! Rebooting...");
+//    delay(500);
+//    ESP.restart();
+//  }
 
   ArduinoOTA.onStart([]() {
     String type;
@@ -194,52 +222,20 @@ void setup() {
   });
   ArduinoOTA.begin();
   Serial.println("Ready");
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
+//  Serial.print("IP address: ");
+//  Serial.println(WiFi.localIP());
 
   // END OF OTA SETUP
-
-  //HTTP SERVER?
-  if (MDNS.begin("esp8266")) {
-    Serial.println("MDNS responder started");
-  }
-
-  server.on("/", handleRoot);
-
-  server.on("/inline", []() {
-    server.send(200, "text/plain", "this works as well");
-  });
-
-  server.on("/motor", HTTP_GET, motor);
-
-  server.on("/ligaled", []() {
-    server.send(200, "text/plain", "ligou");
-    digitalWrite(LED_BUILTIN, LOW);
-  });
-
-  server.on("/desligaled", []() {
-    server.send(200, "text/plain", "apagou");
-    digitalWrite(LED_BUILTIN, HIGH);
-  });
-
-  server.onNotFound(handleNotFound);
-
-  server.begin();
-  Serial.println("HTTP server started");
-  //END OF HTTP SERVER
-
 }
 
 void loop() {
   ArduinoOTA.handle();
 
   server.handleClient();
-  MDNS.update();
-
 
   count++;
-  if(count > 5000)
-    Para();
+  if(count > 50)
+    para();
     
-  delay(1);
+  delay(100);
 }
