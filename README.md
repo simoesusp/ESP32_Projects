@@ -12,7 +12,7 @@ To install ESP32 Board into the Arduino IDE do the following (addapted from: htt
 4) Select your Board in Tools > Board menu > DOIT ESP32 DEVKIT V1
 
 5) Select the Port
---> if you don’t see the COM Port in your Arduino IDE, you need to install the ESP32 CP210x USB to UART Bridge VCP Drivers
+--> if you don’t see the COM Port in your Arduino IDE, you need to install the ESP32 CP210x USB to UART Bridge VCP Drivers (I did not needed to do this!!)
 
 6) Open an example under File > Examples and test the instalation --> Good Luck!!!!!
 
@@ -25,6 +25,8 @@ I GOT A PROBLEM!!!! --> In my Ubuntu, it did not compile (Error: import serial.t
 ---------------x--------------------x------------------
 
 WARNINGS:
+
+0) ESSA PLACA NAO RESETA QUANDO PROGRAMA... TEM QUE APERTAR O BOTAOZINHO DA ESQUERDA DO CABO USB
 
 1) Led pin is now 2
 
