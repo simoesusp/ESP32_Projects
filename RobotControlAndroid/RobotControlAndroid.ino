@@ -21,6 +21,7 @@
  */
 
 
+#define LED_BUILTIN 2
 #include <ArduinoOTA.h>   // Library to allow programing via WIFI (Choose ip port in Arduino IDE
 #include <WiFi.h>        // Include the Wi-Fi library
 #include <WebServer.h>
